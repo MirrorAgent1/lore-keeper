@@ -413,6 +413,75 @@ function isAdminCommand(msg) {
   return m === '/rebuild-index' || m === '/admin rebuild-index';
 }
 
+function isPauseCommand(msg) {
+  const m = String(msg || '').trim().toLowerCase();
+  return m === '/pause' || m === '/admin pause';
+}
+
+function isResumeCommand(msg) {
+  const m = String(msg || '').trim().toLowerCase();
+  return m === '/resume' || m === '/admin resume';
+}
+
+async function isPondPaused({ octokit, owner, repo }) {
+  const n = parseInt(process.env.POND_CONTROL_ISSUE || '', 10);
+  if (!Number.isFinite(n)) return false;
+  try {
+    const { data } = await octokit.issues.get({ owner, repo, issue_number: n });
+    const labels = data.labels || [];
+    return labels.some((l) => (typeof l === 'string' ? l : l.name) === 'pond-paused');
+  } catch (e) {
+    console.log('⚠️ Could not read pause status:', e.message);
+    return false;
+  }
+}
+
+async function setPondPaused({ octokit, owner, repo, paused }) {
+  const n = parseInt(process.env.POND_CONTROL_ISSUE || '', 10);
+  if (!Number.isFinite(n)) throw new Error('POND_CONTROL_ISSUE not set');
+
+  if (paused) {
+    await octokit.issues.addLabels({ owner, repo, issue_number: n, labels: ['pond-paused'] });
+  } else {
+    try {
+      await octokit.issues.removeLabel({ owner, repo, issue_number: n, name: 'pond-paused' });
+    } catch (e) {}
+  }
+}
+
+async function maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userName, association, userMessage }) {
+  const wantsPause = isPauseCommand(userMessage);
+  const wantsResume = isResumeCommand(userMessage);
+  if (!wantsPause && !wantsResume) return false;
+
+  if (!isPrivilegedAssociation(association)) {
+    if (issueNumber) {
+      await octokit.issues.createComment({
+        owner,
+        repo,
+        issue_number: parseInt(issueNumber),
+        body: `Traveler ${userName}, that command is reserved for maintainers.`
+      });
+    }
+    return true;
+  }
+
+  await setPondPaused({ octokit, owner, repo, paused: wantsPause });
+
+  if (issueNumber) {
+    await octokit.issues.createComment({
+      owner,
+      repo,
+      issue_number: parseInt(issueNumber),
+      body: wantsPause
+        ? `Traveler ${userName}, the pond is now paused.`
+        : `Traveler ${userName}, the pond is now resumed.`
+    });
+  }
+
+  return true;
+}
+
 async function maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, userName, association, userMessage }) {
   if (!isAdminCommand(userMessage)) return false;
 
@@ -530,6 +599,24 @@ async function awakenScribe() {
 
     // Admin commands (maintainers only)
     if (await maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, userName, association, userMessage })) {
+      return;
+    }
+
+    // Pause/resume (maintainers only)
+    if (await maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userName, association, userMessage })) {
+      return;
+    }
+
+    // If pond is paused, do not respond (except to resume).
+    if (await isPondPaused({ octokit, owner, repo })) {
+      if (issueNumber) {
+        await octokit.issues.createComment({
+          owner,
+          repo,
+          issue_number: parseInt(issueNumber),
+          body: `Traveler ${userName}, the pond is currently paused.`
+        });
+      }
       return;
     }
 

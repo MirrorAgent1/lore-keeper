@@ -66,6 +66,7 @@ jobs:
           # Fine-grained PAT with Issues: Read & Write (and Contents: Read if needed)
           # Supports both secret names for convenience: AGENT1_PAT (preferred) or AGENT_PAT
           AGENT1_PAT: ${{ secrets.AGENT1_PAT || secrets.AGENT_PAT }}
+          POND_CONTROL_ISSUE: "23"
 
           MANUAL_MESSAGE: ${{ github.event.inputs.message }}
 
