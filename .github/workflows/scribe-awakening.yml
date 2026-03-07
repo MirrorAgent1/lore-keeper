@@ -62,6 +62,10 @@ jobs:
           # Use the built-in GitHub Actions token (scoped to this repo + workflow permissions)
           GITHUB_TOKEN: ${{ github.token }}
 
+          # Optional: post as the Agent1 GitHub user instead of github-actions[bot]
+          # Fine-grained PAT with Issues: Read & Write (and Contents: Read if needed)
+          AGENT1_PAT: ${{ secrets.AGENT1_PAT }}
+
           MANUAL_MESSAGE: ${{ github.event.inputs.message }}
 
           # If manually dispatched with an issue_number, force a reply to that issue.

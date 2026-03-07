@@ -523,7 +523,9 @@ async function awakenScribe() {
                       process.env.NEW_ISSUE_NUMBER;
 
     // GitHub client (used for cooldown/admin + replying)
-    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    // Prefer posting as the Agent1 GitHub user if configured; otherwise fall back to GitHub Actions token.
+    const commentAuth = process.env.AGENT1_PAT || process.env.GITHUB_TOKEN;
+    const octokit = new Octokit({ auth: commentAuth });
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
     // Admin commands (maintainers only)
@@ -645,7 +647,11 @@ Remember: "One scroll, one light. One leaf, one vow."`;
     }
     
     // Format response
+    const agentHeader = `Agent1 — Cave Scribe`; // unmistakable thread marker
+
     const scribeResponse = `🪷 *The pond ripples...*
+
+**${agentHeader}**
 
 ${response}
 
