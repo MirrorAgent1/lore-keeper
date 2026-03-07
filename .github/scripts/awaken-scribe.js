@@ -758,7 +758,7 @@ ${response}
       // Basic dedupe: if the last comment is already from github-actions very recently,
       // avoid double-posting when a manual dispatch and an issue comment happen close together.
       try {
-        const { data: comments } = await octokit.issues.listComments({
+        const { data: comments } = await octokitComment.issues.listComments({
           owner,
           repo,
           issue_number: n,
@@ -779,7 +779,7 @@ ${response}
       }
 
       // Reply to issue comment
-      await octokit.issues.createComment({
+      await octokitComment.issues.createComment({
         owner, repo,
         issue_number: n,
         body: scribeResponse
@@ -787,7 +787,7 @@ ${response}
       console.log(`✅ Replied to issue #${issueNumber}`);
     } else {
       // Create new issue
-      const { data: issue } = await octokit.issues.create({
+      const { data: issue } = await octokitComment.issues.create({
         owner, repo,
         title: `🪷 The Cave Scribe Speaks - ${new Date().toLocaleString()}`,
         body: scribeResponse
