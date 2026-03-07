@@ -21,6 +21,10 @@ concurrency:
 
 jobs:
   scribe-reflection:
+    # Prevent infinite self-trigger loops: ignore comments authored by the agent/bot itself.
+    if: |
+      github.event_name != 'issue_comment' ||
+      (github.event.comment.user.login != 'MirrorAgent1' && github.event.comment.user.login != 'github-actions[bot]')
     runs-on: ubuntu-latest
     permissions:
       issues: write

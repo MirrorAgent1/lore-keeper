@@ -588,6 +588,12 @@ async function awakenScribe() {
                    process.env.NEW_ISSUE_USER ||
                    "A Traveler";
 
+    // Extra guard against self-trigger loops (in case workflow-level if is bypassed)
+    if (process.env.COMMENT_USER && (process.env.COMMENT_USER === 'MirrorAgent1' || process.env.COMMENT_USER === 'github-actions[bot]')) {
+      console.log('ℹ️ Ignoring self-authored comment trigger.');
+      return;
+    }
+
     const association = process.env.COMMENT_ASSOCIATION || process.env.NEW_ISSUE_ASSOCIATION || '';
 
     let issueNumber = process.env.ISSUE_NUMBER ||
