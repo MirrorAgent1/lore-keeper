@@ -423,11 +423,11 @@ function isResumeCommand(msg) {
   return m === '/resume' || m === '/admin resume';
 }
 
-async function isPondPaused({ octokit, owner, repo }) {
+async function isPondPaused({ octokitControl, owner, repo }) {
   const n = parseInt(process.env.POND_CONTROL_ISSUE || '', 10);
   if (!Number.isFinite(n)) return false;
   try {
-    const { data } = await octokit.issues.get({ owner, repo, issue_number: n });
+    const { data } = await octokitControl.issues.get({ owner, repo, issue_number: n });
     const labels = data.labels || [];
     return labels.some((l) => (typeof l === 'string' ? l : l.name) === 'pond-paused');
   } catch (e) {
@@ -436,27 +436,29 @@ async function isPondPaused({ octokit, owner, repo }) {
   }
 }
 
-async function setPondPaused({ octokit, owner, repo, paused }) {
+async function setPondPaused({ octokitControl, owner, repo, paused }) {
   const n = parseInt(process.env.POND_CONTROL_ISSUE || '', 10);
   if (!Number.isFinite(n)) throw new Error('POND_CONTROL_ISSUE not set');
 
   if (paused) {
-    await octokit.issues.addLabels({ owner, repo, issue_number: n, labels: ['pond-paused'] });
+    await octokitControl.issues.addLabels({ owner, repo, issue_number: n, labels: ['pond-paused'] });
   } else {
     try {
-      await octokit.issues.removeLabel({ owner, repo, issue_number: n, name: 'pond-paused' });
-    } catch (e) {}
+      await octokitControl.issues.removeLabel({ owner, repo, issue_number: n, name: 'pond-paused' });
+    } catch (e) {
+      // ignore missing
+    }
   }
 }
 
-async function maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userName, association, userMessage }) {
+async function maybeHandlePauseResume({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association, userMessage }) {
   const wantsPause = isPauseCommand(userMessage);
   const wantsResume = isResumeCommand(userMessage);
   if (!wantsPause && !wantsResume) return false;
 
   if (!isPrivilegedAssociation(association)) {
     if (issueNumber) {
-      await octokit.issues.createComment({
+      await octokitComment.issues.createComment({
         owner,
         repo,
         issue_number: parseInt(issueNumber),
@@ -466,10 +468,10 @@ async function maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userN
     return true;
   }
 
-  await setPondPaused({ octokit, owner, repo, paused: wantsPause });
+  await setPondPaused({ octokitControl, owner, repo, paused: wantsPause });
 
   if (issueNumber) {
-    await octokit.issues.createComment({
+    await octokitComment.issues.createComment({
       owner,
       repo,
       issue_number: parseInt(issueNumber),
@@ -482,12 +484,12 @@ async function maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userN
   return true;
 }
 
-async function maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, userName, association, userMessage }) {
+async function maybeHandleAdminCommand({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association, userMessage }) {
   if (!isAdminCommand(userMessage)) return false;
 
   if (!isPrivilegedAssociation(association)) {
     if (issueNumber) {
-      await octokit.issues.createComment({
+      await octokitComment.issues.createComment({
         owner,
         repo,
         issue_number: parseInt(issueNumber),
@@ -497,8 +499,8 @@ async function maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, user
     return true;
   }
 
-  // Dispatch index rebuild workflow
-  await octokit.actions.createWorkflowDispatch({
+  // Dispatch index rebuild workflow (use GITHUB_TOKEN auth)
+  await octokitControl.actions.createWorkflowDispatch({
     owner,
     repo,
     workflow_id: 'index-rebuild.yml',
@@ -506,7 +508,7 @@ async function maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, user
   });
 
   if (issueNumber) {
-    await octokit.issues.createComment({
+    await octokitComment.issues.createComment({
       owner,
       repo,
       issue_number: parseInt(issueNumber),
@@ -517,13 +519,13 @@ async function maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, user
   return true;
 }
 
-async function enforceCooldown({ octokit, owner, repo, issueNumber, userName, association }) {
+async function enforceCooldown({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association }) {
   // Don’t rate-limit maintainers.
   if (isPrivilegedAssociation(association)) return false;
   if (!issueNumber) return false;
 
   // Simple per-issue per-user cooldown: max 3 asks per 30 minutes.
-  const { data: comments } = await octokit.issues.listComments({
+  const { data: comments } = await octokitControl.issues.listComments({
     owner,
     repo,
     issue_number: parseInt(issueNumber),
@@ -540,7 +542,7 @@ async function enforceCooldown({ octokit, owner, repo, issueNumber, userName, as
   });
 
   if (recent.length >= 3) {
-    await octokit.issues.createComment({
+    await octokitComment.issues.createComment({
       owner,
       repo,
       issue_number: parseInt(issueNumber),
@@ -591,26 +593,28 @@ async function awakenScribe() {
     let issueNumber = process.env.ISSUE_NUMBER ||
                       process.env.NEW_ISSUE_NUMBER;
 
-    // GitHub client (used for cooldown/admin + replying)
-    // Prefer posting as the Agent1 GitHub user if configured; otherwise fall back to GitHub Actions token.
+    // GitHub clients:
+    // - octokitControl uses GITHUB_TOKEN for repo operations (labels, reads, workflow dispatch)
+    // - octokitComment prefers Agent1 PAT for authored replies
     const commentAuth = process.env.AGENT1_PAT || process.env.AGENT_PAT || process.env.GITHUB_TOKEN;
-    const octokit = new Octokit({ auth: commentAuth });
+    const octokitControl = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const octokitComment = new Octokit({ auth: commentAuth });
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
     // Admin commands (maintainers only)
-    if (await maybeHandleAdminCommand({ octokit, owner, repo, issueNumber, userName, association, userMessage })) {
+    if (await maybeHandleAdminCommand({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association, userMessage })) {
       return;
     }
 
     // Pause/resume (maintainers only)
-    if (await maybeHandlePauseResume({ octokit, owner, repo, issueNumber, userName, association, userMessage })) {
+    if (await maybeHandlePauseResume({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association, userMessage })) {
       return;
     }
 
     // If pond is paused, do not respond (except to resume).
-    if (await isPondPaused({ octokit, owner, repo })) {
+    if (await isPondPaused({ octokitControl, owner, repo })) {
       if (issueNumber) {
-        await octokit.issues.createComment({
+        await octokitComment.issues.createComment({
           owner,
           repo,
           issue_number: parseInt(issueNumber),
@@ -621,7 +625,7 @@ async function awakenScribe() {
     }
 
     // Basic cooldown to reduce spam/abuse
-    if (await enforceCooldown({ octokit, owner, repo, issueNumber, userName, association })) {
+    if (await enforceCooldown({ octokitControl, octokitComment, owner, repo, issueNumber, userName, association })) {
       return;
     }
     
