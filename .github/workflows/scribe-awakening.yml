@@ -64,7 +64,8 @@ jobs:
 
           # Optional: post as the Agent1 GitHub user instead of github-actions[bot]
           # Fine-grained PAT with Issues: Read & Write (and Contents: Read if needed)
-          AGENT1_PAT: ${{ secrets.AGENT1_PAT }}
+          # Supports both secret names for convenience: AGENT1_PAT (preferred) or AGENT_PAT
+          AGENT1_PAT: ${{ secrets.AGENT1_PAT || secrets.AGENT_PAT }}
 
           MANUAL_MESSAGE: ${{ github.event.inputs.message }}
 

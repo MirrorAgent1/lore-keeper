@@ -524,7 +524,7 @@ async function awakenScribe() {
 
     // GitHub client (used for cooldown/admin + replying)
     // Prefer posting as the Agent1 GitHub user if configured; otherwise fall back to GitHub Actions token.
-    const commentAuth = process.env.AGENT1_PAT || process.env.GITHUB_TOKEN;
+    const commentAuth = process.env.AGENT1_PAT || process.env.AGENT_PAT || process.env.GITHUB_TOKEN;
     const octokit = new Octokit({ auth: commentAuth });
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
