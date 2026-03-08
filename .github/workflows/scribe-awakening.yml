@@ -21,10 +21,20 @@ concurrency:
 
 jobs:
   scribe-reflection:
-    # Prevent infinite self-trigger loops: ignore comments authored by the agent/bot itself.
+    # Prevent loops + only respond on explicit summon for comments.
+    # - issues.opened: always respond
+    # - issue_comment.created: respond only if user says "awaken" or mentions @agent1/@MirrorAgent1
     if: |
-      github.event_name != 'issue_comment' ||
-      (github.event.comment.user.login != 'MirrorAgent1' && github.event.comment.user.login != 'github-actions[bot]')
+      github.event_name != 'issue_comment' || (
+        github.event.comment.user.login != 'github-actions[bot]' &&
+        github.event.comment.user.login != 'MirrorAgent1' &&
+        github.event.comment.user.login != 'toadaid-agent0' &&
+        (
+          contains(github.event.comment.body, 'awaken') ||
+          contains(github.event.comment.body, '@agent1') ||
+          contains(github.event.comment.body, '@MirrorAgent1')
+        )
+      )
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -87,3 +97,56 @@ jobs:
           NEW_ISSUE_USER: ${{ github.event.issue.user.login }}
           NEW_ISSUE_ASSOCIATION: ${{ github.event.issue.author_association }}
         run: node .github/scripts/awaken-scribe.js
+
+      - name: Summon Agent0 (repository_dispatch)
+        # Agent0 joins every new issue. Also joins comment threads only when explicitly mentioned.
+        if: |
+          github.event_name == 'issues' ||
+          (github.event_name == 'issue_comment' && (
+            contains(github.event.comment.body, '@agent0') ||
+            contains(github.event.comment.body, '@toadaid-agent0') ||
+            contains(github.event.comment.body, 'keeper')
+          ))
+        env:
+          AGENT0_DISPATCH_TOKEN: ${{ secrets.AGENT0_DISPATCH_TOKEN }}
+          TARGET_REPO: toadaid-agent0/pond-agent-0
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_USER: ${{ github.event.comment.user.login }}
+        run: |
+          if [ -z "$AGENT0_DISPATCH_TOKEN" ]; then
+            echo "AGENT0_DISPATCH_TOKEN is not set; skipping Agent0 dispatch."
+            exit 0
+          fi
+
+          EVENT_TYPE="pond_issue_opened"
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then EVENT_TYPE="pond_issue_commented"; fi
+
+          payload=$(jq -n \
+            --arg source_repo "${{ github.repository }}" \
+            --arg issue_number "$ISSUE_NUMBER" \
+            --arg issue_url "$ISSUE_URL" \
+            --arg issue_title "$ISSUE_TITLE" \
+            --arg issue_body "${ISSUE_BODY:-}" \
+            --arg comment_body "${COMMENT_BODY:-}" \
+            --arg comment_user "${COMMENT_USER:-}" \
+            '{
+              source_repo: $source_repo,
+              issue_number: ($issue_number|tonumber),
+              issue_url: $issue_url,
+              issue_title: $issue_title,
+              issue_body: $issue_body,
+              comment_body: $comment_body,
+              comment_user: $comment_user
+            }')
+
+          echo "Dispatching $EVENT_TYPE to $TARGET_REPO for issue #$ISSUE_NUMBER"
+
+          curl -sS -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $AGENT0_DISPATCH_TOKEN" \
+            "https://api.github.com/repos/$TARGET_REPO/dispatches" \
+            -d "{\"event_type\":\"$EVENT_TYPE\",\"client_payload\":$payload}"

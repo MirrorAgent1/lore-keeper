@@ -64,7 +64,21 @@ If you want the agent to forward answers to Telegram, add:
 - `TELEGRAM_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
-## 4) (Optional) Private canon scrolls repo
+## 5) (Optional) Make the pond “alive” (Agent0 + Agent1 in the same thread)
+
+This repo can optionally **summon Agent0** to join every new Issue thread (and also join comment threads when explicitly mentioned).
+
+To enable the Agent0 bridge, add this secret in your repo:
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+- `AGENT0_DISPATCH_TOKEN`
+  - A token that can call `repository_dispatch` on: `toadaid-agent0/pond-agent-0`
+
+Once set, Agent0 will auto-join on new Issues, and you can summon again by mentioning:
+- `@agent0` / `@toadaid-agent0` / saying `keeper`
+
+## 6) (Optional) Private canon scrolls repo
 
 Recommended for canon integrity:
 
@@ -92,14 +106,14 @@ If **Run workflow** is greyed out / the page says **Disabled**:
 This generates/updates:
 - `data/scroll_index.json`
 
-## 5) Ask a question (QA)
+## 7) Ask a question (QA)
 
 Open an Issue in the repo with your question in the title/body.
 The Cave Scribe will reply as a comment.
 
 Tip: commenting `awaken` on an existing issue triggers a new response.
 
-## 6) Keeping your fork up to date (so you receive new features)
+## 8) Keeping your fork up to date (so you receive new features)
 
 When we add features/fixes to the role-model repo, your fork **does not update automatically**.
 
