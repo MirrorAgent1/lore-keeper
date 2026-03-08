@@ -524,7 +524,7 @@ async function enforceCooldown({ octokitControl, octokitComment, owner, repo, is
   if (isPrivilegedAssociation(association)) return false;
   if (!issueNumber) return false;
 
-  // Simple per-issue per-user cooldown: max 3 asks per 30 minutes.
+  // Simple per-issue per-user cooldown: max 3 asks per 5 minutes.
   const { data: comments } = await octokitControl.issues.listComments({
     owner,
     repo,
@@ -533,7 +533,7 @@ async function enforceCooldown({ octokitControl, octokitComment, owner, repo, is
   });
 
   const now = Date.now();
-  const windowMs = 30 * 60 * 1000;
+  const windowMs = 5 * 60 * 1000;
   const recent = (comments || []).filter((c) => {
     const login = c?.user?.login;
     if (!login || login !== userName) return false;
@@ -546,7 +546,7 @@ async function enforceCooldown({ octokitControl, octokitComment, owner, repo, is
       owner,
       repo,
       issue_number: parseInt(issueNumber),
-      body: `Traveler ${userName}, the pond asks for patience. Please wait a little before asking again (cooldown: 30 minutes).`
+      body: `Traveler ${userName}, the pond asks for patience. Please wait a little before asking again (cooldown: 5 minutes).`
     });
     return true;
   }
