@@ -13,7 +13,11 @@ You ask questions via **GitHub Issues**. A GitHub Action runs the Cave Scribe an
 2. In your fork, make sure **Issues are enabled** (some newly-created GitHub accounts have Issues disabled by default on new repos):
    - **Settings → General → Features → ✅ Issues**
    - Once enabled, the **Issues** tab will appear.
-3. In your fork: **Actions → Enable workflows** (if GitHub prompts)
+3. Enable GitHub Actions on the fork:
+   - Go to the repo **Actions** tab
+   - If GitHub shows **“Workflows are disabled”**, click **Enable workflows**
+
+> If you see a workflow page that says **“Disabled”** (for example: **Rebuild Scroll Index**), it usually means Actions haven’t been enabled yet on that fork, or the workflow was disabled in the Actions UI.
 
 ## 2) Add at least one model provider key
 
@@ -67,6 +71,10 @@ To allow GitHub Actions to read the private canon repo:
 
 Run:
 - **Actions → Rebuild Scroll Index → Run workflow**
+
+If **Run workflow** is greyed out / the page says **Disabled**:
+- First go to the repo **Actions** tab and click **Enable workflows** (GitHub often disables workflows on fresh forks)
+- Then open **Actions → Rebuild Scroll Index** again and try **Run workflow**
 
 This generates/updates:
 - `data/scroll_index.json`
