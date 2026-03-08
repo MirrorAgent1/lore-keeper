@@ -44,7 +44,20 @@ Add these in your fork:
 - OpenRouter: https://openrouter.ai/keys
 - Gemini (Google AI Studio): https://aistudio.google.com/app/apikey
 
-## 3) (Optional) Telegram bridge
+## 3) (Optional) Customize the agent name shown in replies (recommended for forks)
+
+By default, replies will be signed neutrally as **Cave Scribe**.
+
+If you want the reply header/signature to match *your* fork/identity, add repo variables:
+
+**Settings → Secrets and variables → Actions → Variables**
+
+- `SCRIBE_AGENT_LABEL`
+  - Example: `Toadgang Scribe` or `Based_Toby Scribe`
+- `SCRIBE_SIGNATURE`
+  - Example: `Answered by: @Based_Toby` (or any short line)
+
+## 4) (Optional) Telegram bridge
 
 If you want the agent to forward answers to Telegram, add:
 

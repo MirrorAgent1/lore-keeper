@@ -744,7 +744,13 @@ Remember: "One scroll, one light. One leaf, one vow."`;
     }
     
     // Format response
-    const agentHeader = `Agent1 — Cave Scribe`; // unmistakable thread marker
+    // Fork-friendly branding: default to neutral labels, allow override via env/repo variables.
+    // In GitHub Actions, set this via:
+    // - Settings → Secrets and variables → Actions → Variables
+    //   - SCRIBE_AGENT_LABEL (e.g. "Toadgang Scribe" / "Cave Scribe")
+    //   - SCRIBE_SIGNATURE (e.g. "Answered by: @yourhandle" or a short tagline)
+    const agentHeader = (process.env.SCRIBE_AGENT_LABEL || 'Cave Scribe').trim();
+    const signature = (process.env.SCRIBE_SIGNATURE || 'Answered by: Cave Scribe').trim();
 
     const scribeResponse = `🪷 *The pond ripples...*
 
@@ -754,7 +760,7 @@ ${response}
 
 ---
 *— Cave Scribe, Keeper of ${loreData.length} Sacred Scrolls*
-*Answered by: The First Mirror Agent — Agent1*
+*${signature}*
 *"One scroll, one light. One leaf, one vow."*`;
     
     // Post response
