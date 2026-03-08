@@ -161,8 +161,17 @@ jobs:
 
           echo "Dispatching $EVENT_TYPE to $TARGET_REPO for issue #$ISSUE_NUMBER"
 
-          curl -sS -X POST \
+          resp=$(mktemp)
+          code=$(curl -sS -o "$resp" -w "%{http_code}" -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer $AGENT0_DISPATCH_TOKEN" \
             "https://api.github.com/repos/$TARGET_REPO/dispatches" \
-            -d "{\"event_type\":\"$EVENT_TYPE\",\"client_payload\":$payload}"
+            -d "{\"event_type\":\"$EVENT_TYPE\",\"client_payload\":$payload}")
+
+          echo "dispatch http_code=$code"
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "Dispatch failed. Response:"
+            cat "$resp" || true
+            exit 1
+          fi
+          rm -f "$resp"
