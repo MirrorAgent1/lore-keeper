@@ -21,9 +21,10 @@ concurrency:
 
 jobs:
   scribe-reflection:
-    # Prevent loops + only respond on explicit summon for comments.
-    # - issues.opened: always respond
-    # - issue_comment.created: respond only if user says "awaken" or mentions @agent1/@MirrorAgent1
+    # Agent1 reply rules:
+    # - issues.opened: always reply
+    # - issue_comment.created: reply only on explicit summon (awaken/@agent1/@MirrorAgent1)
+    # - ignore bot/self/Agent0 to prevent loops
     if: |
       github.event_name != 'issue_comment' || (
         github.event.comment.user.login != 'github-actions[bot]' &&
@@ -98,15 +99,28 @@ jobs:
           NEW_ISSUE_ASSOCIATION: ${{ github.event.issue.author_association }}
         run: node .github/scripts/awaken-scribe.js
 
-      - name: Summon Agent0 (repository_dispatch)
-        # Agent0 joins every new issue. Also joins comment threads only when explicitly mentioned.
-        if: |
-          github.event_name == 'issues' ||
-          (github.event_name == 'issue_comment' && (
-            contains(github.event.comment.body, '@agent0') ||
-            contains(github.event.comment.body, '@toadaid-agent0') ||
-            contains(github.event.comment.body, 'keeper')
-          ))
+  summon-agent0:
+    # Agent0 join rules:
+    # - issues.opened: always dispatch (auto-join)
+    # - issue_comment.created: dispatch only when explicitly mentioned (@agent0/@toadaid-agent0/keeper)
+    # - ignore comments by bots/self/Agent0 to prevent echo loops
+    if: |
+      github.event_name == 'issues' || (
+        github.event_name == 'issue_comment' &&
+        github.event.comment.user.login != 'github-actions[bot]' &&
+        github.event.comment.user.login != 'MirrorAgent1' &&
+        github.event.comment.user.login != 'toadaid-agent0' &&
+        (
+          contains(github.event.comment.body, '@agent0') ||
+          contains(github.event.comment.body, '@toadaid-agent0') ||
+          contains(github.event.comment.body, 'keeper')
+        )
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+    steps:
+      - name: Dispatch to Agent0 (repository_dispatch)
         env:
           AGENT0_DISPATCH_TOKEN: ${{ secrets.AGENT0_DISPATCH_TOKEN }}
           TARGET_REPO: toadaid-agent0/pond-agent-0
