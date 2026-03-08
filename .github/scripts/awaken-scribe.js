@@ -431,6 +431,8 @@ async function isPondPaused({ octokitControl, owner, repo }) {
     const labels = data.labels || [];
     return labels.some((l) => (typeof l === 'string' ? l : l.name) === 'pond-paused');
   } catch (e) {
+    // Common on forks: control issue number not present → 404. Treat as "not paused" without noise.
+    if (e && (e.status === 404 || e.status === 410)) return false;
     console.log('⚠️ Could not read pause status:', e.message);
     return false;
   }

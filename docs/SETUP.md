@@ -57,14 +57,28 @@ If you want the reply header/signature to match *your* fork/identity, add repo v
 - `SCRIBE_SIGNATURE`
   - Example: `Answered by: @Based_Toby` (or any short line)
 
-## 4) (Optional) Telegram bridge
+## 4) (Optional) Pause / resume controls (recommended for maintainers)
+
+The role model supports admin-only commands:
+- `/pause`
+- `/resume`
+
+To enable this, create a control issue in your repo (any title), note its issue number, then set a repo variable:
+
+**Settings → Secrets and variables → Actions → Variables**
+
+- `POND_CONTROL_ISSUE` = (your issue number, e.g. `1`)
+
+If you don’t set this, pause/resume is simply disabled (no errors).
+
+## 5) (Optional) Telegram bridge
 
 If you want the agent to forward answers to Telegram, add:
 
 - `TELEGRAM_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
-## 5) (Optional) Make the pond “alive” (multi-agent pings)
+## 6) (Optional) Make the pond “alive” (multi-agent pings)
 
 This repo can optionally **summon other pond agents** (like Agent0) to join the same Issue thread.
 
@@ -106,7 +120,7 @@ Back-compat:
 - Comments: mention the agent (e.g. `@toadaid-agent0`) to summon.
 - Alias: saying `keeper` also summons `agent0`.
 
-## 6) (Optional) Private canon scrolls repo
+## 7) (Optional) Private canon scrolls repo
 
 Recommended for canon integrity:
 
@@ -134,14 +148,14 @@ If **Run workflow** is greyed out / the page says **Disabled**:
 This generates/updates:
 - `data/scroll_index.json`
 
-## 7) Ask a question (QA)
+## 8) Ask a question (QA)
 
 Open an Issue in the repo with your question in the title/body.
 The Cave Scribe will reply as a comment.
 
 Tip: commenting `awaken` on an existing issue triggers a new response.
 
-## 8) Keeping your fork up to date (so you receive new features)
+## 9) Keeping your fork up to date (so you receive new features)
 
 When we add features/fixes to the role-model repo, your fork **does not update automatically**.
 
