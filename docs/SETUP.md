@@ -66,12 +66,17 @@ If you want the agent to forward answers to Telegram, add:
 
 ## 5) (Optional) Make the pond “alive” (multi-agent pings)
 
-This repo can optionally **summon other pond agents** to join the same Issue thread.
+This repo can optionally **summon other pond agents** (like Agent0) to join the same Issue thread.
+
+This feature is **opt-in**. If you do nothing, your fork stays quiet and self-contained.
 
 ### 5.1 Configure which agents exist (no workflow edits)
 
 Edit:
 - `data/pond_agents.json`
+
+Quick start (enable Agent0):
+- set the `agent0` entry to: `"enabled": true`
 
 Each entry defines:
 - `mention` (what users type, e.g. `@toadaid-agent0`)
@@ -81,14 +86,16 @@ Each entry defines:
 
 > By default, agents are shipped as `enabled: false` so forks don’t dispatch anywhere until you opt in.
 
-### 5.2 Add a dispatch token
+### 5.2 Add a dispatch token (required)
 
-Add **one** repo secret (preferred):
+To enable multi-agent pings, add **one** repo secret:
 
 **Settings → Secrets and variables → Actions → New repository secret**
 
 - `POND_DISPATCH_TOKEN`
   - A token that can call `repository_dispatch` on the target agent repos you enabled.
+
+> If you don’t set this token, nothing breaks — the workflow will simply skip dispatching.
 
 Back-compat:
 - `AGENT0_DISPATCH_TOKEN` is still supported as a fallback.
