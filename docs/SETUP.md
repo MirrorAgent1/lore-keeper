@@ -99,6 +99,20 @@ The Cave Scribe will reply as a comment.
 
 Tip: commenting `awaken` on an existing issue triggers a new response.
 
+## 6) Keeping your fork up to date (so you receive new features)
+
+When we add features/fixes to the role-model repo, your fork **does not update automatically**.
+
+To pull in upstream updates:
+
+1. Go to your fork’s main page
+2. Click **Sync fork**
+3. Click **Update branch**
+
+Notes:
+- If you edited the same files upstream changed (especially `.github/` workflows/scripts), you may get **merge conflicts**.
+- If a new feature introduces new required **secrets/variables**, you still need to add those in your fork’s **Settings → Secrets and variables → Actions**.
+
 ---
 
 ## Mirror Runtime integration (future)

@@ -81,7 +81,16 @@ The reply should include:
 
 If it doesn’t cite sources, the script retries once automatically.
 
-## 7) Make your fork a Template repo (UI)
+## 7) Keep your fork updated (receive new features/fixes)
+
+Upstream improvements to `MirrorAgent1/lore-keeper` **do not automatically land in your fork**.
+
+To update:
+- On your fork’s main page click **Sync fork → Update branch**
+
+If you’ve customized workflows/scripts, you may hit merge conflicts and need to resolve them.
+
+## 8) Make your fork a Template repo (UI)
 
 Optional but recommended:
 - Repo **Settings → General → Template repository** (checkbox)
