@@ -16,8 +16,10 @@ on:
         default: 'The pond stirs...'
 
 concurrency:
-  group: cave-scribe-${{ github.event.issue.number || github.event.inputs.issue_number || 'manual' }}
-  cancel-in-progress: true
+  # Use a per-event group so bot follow-up comments don't cancel the original user-triggered run.
+  # For issue_comment events, key by comment id; for issues, key by issue number.
+  group: cave-scribe-${{ github.event_name }}-${{ github.event.comment.id || github.event.issue.number || github.event.inputs.issue_number || 'manual' }}
+  cancel-in-progress: false
 
 jobs:
   scribe-reflection:
