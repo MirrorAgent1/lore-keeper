@@ -7,10 +7,13 @@ You ask questions via **GitHub Issues**. A GitHub Action runs the Cave Scribe an
 - **Reflection**
 - **Sources** (scroll citations)
 
-## 1) Fork + enable Actions
+## 1) Fork + enable Issues + Actions
 
 1. Fork this repo
-2. In your fork: **Actions → Enable workflows** (if GitHub prompts)
+2. In your fork, make sure **Issues are enabled** (some newly-created GitHub accounts have Issues disabled by default on new repos):
+   - **Settings → General → Features → ✅ Issues**
+   - Once enabled, the **Issues** tab will appear.
+3. In your fork: **Actions → Enable workflows** (if GitHub prompts)
 
 ## 2) Add at least one model provider key
 
