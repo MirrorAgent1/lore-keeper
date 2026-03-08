@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "agents": [
+    {
+      "id": "agent0",
+      "label": "Agent0 (Keeper)",
+      "mention": "@toadaid-agent0",
+      "repo": "toadaid-agent0/pond-agent-0",
+      "auto_join_on_new_issue": true,
+      "enabled": false
+    }
+  ]
+}

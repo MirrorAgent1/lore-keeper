@@ -64,19 +64,40 @@ If you want the agent to forward answers to Telegram, add:
 - `TELEGRAM_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
-## 5) (Optional) Make the pond “alive” (Agent0 + Agent1 in the same thread)
+## 5) (Optional) Make the pond “alive” (multi-agent pings)
 
-This repo can optionally **summon Agent0** to join every new Issue thread (and also join comment threads when explicitly mentioned).
+This repo can optionally **summon other pond agents** to join the same Issue thread.
 
-To enable the Agent0 bridge, add this secret in your repo:
+### 5.1 Configure which agents exist (no workflow edits)
+
+Edit:
+- `data/pond_agents.json`
+
+Each entry defines:
+- `mention` (what users type, e.g. `@toadaid-agent0`)
+- `repo` (where to dispatch, e.g. `toadaid-agent0/pond-agent-0`)
+- `auto_join_on_new_issue` (true/false)
+- `enabled` (true/false)
+
+> By default, agents are shipped as `enabled: false` so forks don’t dispatch anywhere until you opt in.
+
+### 5.2 Add a dispatch token
+
+Add **one** repo secret (preferred):
 
 **Settings → Secrets and variables → Actions → New repository secret**
 
-- `AGENT0_DISPATCH_TOKEN`
-  - A token that can call `repository_dispatch` on: `toadaid-agent0/pond-agent-0`
+- `POND_DISPATCH_TOKEN`
+  - A token that can call `repository_dispatch` on the target agent repos you enabled.
 
-Once set, Agent0 will auto-join on new Issues, and you can summon again by mentioning:
-- `@agent0` / `@toadaid-agent0` / saying `keeper`
+Back-compat:
+- `AGENT0_DISPATCH_TOKEN` is still supported as a fallback.
+
+### 5.3 How to summon
+
+- New issues: agents with `auto_join_on_new_issue: true` will be auto-dispatched.
+- Comments: mention the agent (e.g. `@toadaid-agent0`) to summon.
+- Alias: saying `keeper` also summons `agent0`.
 
 ## 6) (Optional) Private canon scrolls repo
 
