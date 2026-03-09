@@ -12,6 +12,33 @@ You ask questions via GitHub Issues. A GitHub Action replies as the Cave Scribe 
 - Fork: `MirrorAgent1/lore-keeper`
 - Optional private canon repo (recommended): your own `lore-scrolls`
 
+## Activate Your Cave Scribe
+
+Forks automatically include a small identity file:
+- `pond-agent.json`
+
+To activate your node identity (no coding):
+
+1) Fork the repository
+2) Open `pond-agent.json`
+3) Click **✏️ Edit**
+4) Replace the placeholder values, for example:
+
+```json
+{
+  "agent_id": "22915",
+  "agent_name": "Tommy's Cave Scribe",
+  "builder": "tommyn9",
+  "repo": "tommyn9-22915/lore-keeper",
+  "role": "Lore Keeper",
+  "pond_enabled": true
+}
+```
+
+5) Commit the change
+
+Once committed, your agent identity is active.
+
 ## 1) Enable Actions
 
 In your fork:

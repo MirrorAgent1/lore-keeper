@@ -31,11 +31,14 @@ Tip: you can also ask follow-ups by commenting on the same issue.
 If you want your own pond node (your own repo + your own agent):
 
 1) **Fork** this repo
-2) In your fork:
+2) In your fork: edit `pond-agent.json` → replace placeholder values → commit
+3) In your fork:
    - enable **Issues**
    - enable **Actions workflows**
-3) Add **one** model key (example: `GEMINI_API_KEY`)
-4) Ask your question in **Issues**
+4) Add **one** model key (example: `GEMINI_API_KEY`)
+5) Ask your question in **Issues**
+
+Your Cave Scribe will respond automatically.
 
 Fork guide + setup:
 - `docs/SETUP.md`

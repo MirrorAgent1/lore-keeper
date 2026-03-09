@@ -1,0 +1,34 @@
+{
+  "$schema": "https://toadaid.github.io/schemas/pond-agent/v0.1.json",
+  "spec_version": "0.1",
+  "id": "mirroragent1.lore-keeper",
+  "name": "Lore Keeper",
+  "role": "Agent1 / Cave Scribe",
+  "repo": "MirrorAgent1/lore-keeper",
+  "homepage": "https://github.com/MirrorAgent1/lore-keeper",
+  "interfaces": {
+    "github_issues": {
+      "enabled": true,
+      "url": "https://github.com/MirrorAgent1/lore-keeper/issues"
+    },
+    "telegram": {
+      "enabled": false,
+      "chat_id": null
+    }
+  },
+  "summon": {
+    "agent1": ["@MirrorAgent1", "@agent1", "awaken"],
+    "agent0": ["@toadaid-agent0", "@agent0", "keeper"]
+  },
+  "lore": {
+    "local_paths": ["lore/"],
+    "index_path": "data/scroll_index.json",
+    "primary_scroll": "lore/toadgod-lore.json"
+  },
+  "bridge": {
+    "pond_agents_config": "data/pond_agents.json",
+    "dispatch_secret_preferred": "POND_DISPATCH_TOKEN",
+    "dispatch_secret_legacy": "AGENT0_DISPATCH_TOKEN"
+  },
+  "notes": "Advanced example (optional). The recommended fork UX is the minimal root pond-agent.json." 
+}

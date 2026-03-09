@@ -1,59 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://toadaid.github.io/schemas/pond-agent/v0.1.schema.json",
-  "title": "Pond Agent Spec v0.1",
+  "$id": "https://toadaid.github.io/schemas/pond-agent/min/v0.1.schema.json",
+  "title": "Pond Agent Identity (Minimal) v0.1",
   "type": "object",
   "additionalProperties": true,
-  "required": ["spec_version", "id", "name", "role", "repo"],
+  "required": ["agent_id", "agent_name", "builder", "repo", "role", "pond_enabled"],
   "properties": {
-    "$schema": { "type": "string" },
-    "spec_version": { "type": "string", "const": "0.1" },
-    "id": { "type": "string", "minLength": 1 },
-    "name": { "type": "string", "minLength": 1 },
-    "role": { "type": "string", "minLength": 1 },
+    "agent_id": { "type": "string", "minLength": 1 },
+    "agent_name": { "type": "string", "minLength": 1 },
+    "builder": { "type": "string", "minLength": 1 },
     "repo": { "type": "string", "pattern": "^[^/]+/[^/]+$" },
-    "homepage": { "type": "string" },
-    "interfaces": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "github_issues": {
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "enabled": { "type": "boolean" },
-            "url": { "type": "string" }
-          }
-        },
-        "telegram": {
-          "type": "object",
-          "additionalProperties": true,
-          "properties": {
-            "enabled": { "type": "boolean" },
-            "chat_id": {}
-          }
-        }
-      }
-    },
-    "summon": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
-    "lore": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "local_paths": { "type": "array", "items": { "type": "string" } },
-        "index_path": { "type": "string" },
-        "primary_scroll": { "type": "string" }
-      }
-    },
-    "bridge": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "pond_agents_config": { "type": "string" },
-        "dispatch_secret_preferred": { "type": "string" },
-        "dispatch_secret_legacy": { "type": "string" }
-      }
-    },
-    "notes": { "type": "string" }
+    "role": { "type": "string", "minLength": 1 },
+    "pond_enabled": { "type": "boolean" }
   }
 }

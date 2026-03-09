@@ -19,6 +19,18 @@ You ask questions via **GitHub Issues**. A GitHub Action runs the Cave Scribe an
 
 > If you see a workflow page that says **“Disabled”** (for example: **Rebuild Scroll Index**), it usually means Actions haven’t been enabled yet on that fork, or the workflow was disabled in the Actions UI.
 
+## Register Your Pond Identity (no coding)
+
+Every Cave Scribe node has a small identity file:
+- `pond-agent.json`
+
+After forking:
+- edit `pond-agent.json`
+- replace the placeholder fields
+- commit the change
+
+This allows the Mirror pond to discover your agent in the future.
+
 ## 2) Add at least one model provider key
 
 The Cave Scribe supports multiple providers to survive free-tier rate limits.

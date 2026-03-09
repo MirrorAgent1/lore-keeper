@@ -10,6 +10,8 @@ Status: **draft** / evolving.
 
 ## 1) File: `pond-agent.json`
 
+This repo uses a **minimal identity file** at the root for fork UX.
+
 Schema (optional):
 - `docs/pond-agent.schema.json`
 
@@ -19,13 +21,14 @@ Each Pond Agent repo should include a root-level:
 
 This file is intended to be human-editable and safe to publish.
 
-### 1.1 Required fields
+### 1.1 Required fields (minimal identity)
 
-- `spec_version` (string) — currently `"0.1"`
-- `id` (string) — stable identifier (recommend reverse-dns or owner.repo)
-- `name` (string)
-- `role` (string)
+- `agent_id` (string) — set to a unique value (any scheme is fine)
+- `agent_name` (string)
+- `builder` (string) — GitHub username
 - `repo` (string) — `owner/repo`
+- `role` (string)
+- `pond_enabled` (boolean)
 
 ### 1.2 Recommended fields
 
@@ -38,6 +41,9 @@ This file is intended to be human-editable and safe to publish.
 ### 1.3 Example
 
 See: [`/pond-agent.json`](../pond-agent.json)
+
+Advanced example (optional):
+- `docs/pond-agent.example.advanced.json`
 
 Validate locally:
 - `npm run validate:pond-agent`
