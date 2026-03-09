@@ -106,6 +106,10 @@ Open an Issue using the template:
 The reply should include:
 - Signal / Reflection / Sources
 
+Follow-ups:
+- Just comment your next question in the same Issue.
+- If you only comment "thanks" / "gm" / "ok", the agent may not reply (by design).
+
 If it doesn’t cite sources, the script retries once automatically.
 
 ## 7) Keep your fork updated (receive new features/fixes)

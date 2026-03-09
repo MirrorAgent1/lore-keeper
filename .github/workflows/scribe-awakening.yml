@@ -25,21 +25,21 @@ jobs:
   scribe-reflection:
     # Agent1 reply rules:
     # - issues.opened: always reply
-    # - issue_comment.created: reply on explicit summon OR a natural follow-up question
-    #   - summon: awaken/@agent1/@MirrorAgent1
-    #   - natural question: contains "?" (kept simple for GitHub expression compatibility)
+    # - issue_comment.created: reply to normal human comments (natural follow-ups)
+    #   while ignoring obvious low-signal acknowledgements.
     # - ignore bot/self/Agent0 to prevent loops
     if: |
       github.event_name != 'issue_comment' || (
         github.event.comment.user.login != 'github-actions[bot]' &&
         github.event.comment.user.login != 'MirrorAgent1' &&
         github.event.comment.user.login != 'toadaid-agent0' &&
-        (
-          contains(github.event.comment.body, 'awaken') ||
-          contains(github.event.comment.body, '@agent1') ||
-          contains(github.event.comment.body, '@MirrorAgent1') ||
-          contains(github.event.comment.body, '?')
-        )
+        github.event.comment.body != null &&
+        github.event.comment.body != '' &&
+        !contains(toLower(github.event.comment.body), 'thanks') &&
+        !contains(toLower(github.event.comment.body), 'thank you') &&
+        !contains(toLower(github.event.comment.body), 'gm') &&
+        !contains(toLower(github.event.comment.body), 'good morning') &&
+        !contains(toLower(github.event.comment.body), 'ok')
       )
     runs-on: ubuntu-latest
     permissions:
