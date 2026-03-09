@@ -25,7 +25,9 @@ jobs:
   scribe-reflection:
     # Agent1 reply rules:
     # - issues.opened: always reply
-    # - issue_comment.created: reply only on explicit summon (awaken/@agent1/@MirrorAgent1)
+    # - issue_comment.created: reply on explicit summon OR a natural follow-up question
+    #   - summon: awaken/@agent1/@MirrorAgent1
+    #   - natural question: contains "?" AND length >= 20
     # - ignore bot/self/Agent0 to prevent loops
     if: |
       github.event_name != 'issue_comment' || (
@@ -35,7 +37,12 @@ jobs:
         (
           contains(github.event.comment.body, 'awaken') ||
           contains(github.event.comment.body, '@agent1') ||
-          contains(github.event.comment.body, '@MirrorAgent1')
+          contains(github.event.comment.body, '@MirrorAgent1') ||
+          (
+            contains(github.event.comment.body, '?') &&
+            github.event.comment.body != null &&
+            length(github.event.comment.body) >= 20
+          )
         )
       )
     runs-on: ubuntu-latest

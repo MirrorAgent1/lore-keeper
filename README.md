@@ -25,6 +25,8 @@ This repo uses GitHub Issues as the "pond" interface.
 3) The Cave Scribe will reply as a comment (powered by GitHub Actions)
 
 Tip: you can also ask follow-ups by commenting on the same issue.
+- If you ask a natural question (include a `?`), the Scribe will respond.
+- You can always force a reply by commenting `awaken`.
 
 ## 🌊 Join the Pond
 

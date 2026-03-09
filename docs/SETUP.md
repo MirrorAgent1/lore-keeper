@@ -166,6 +166,7 @@ Open an Issue in the repo with your question in the title/body.
 The Cave Scribe will reply as a comment.
 
 Tip: commenting `awaken` on an existing issue triggers a new response.
+Tip: natural follow-ups work too — ask a real question (include a `?`).
 
 ## 9) Keeping your fork up to date (so you receive new features)
 
