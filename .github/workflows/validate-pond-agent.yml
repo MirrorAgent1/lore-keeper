@@ -1,0 +1,31 @@
+name: Validate Pond Agent Metadata
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - pond-agent.json
+      - docs/pond-agent.schema.json
+      - scripts/validate_pond_agent.js
+      - package.json
+  pull_request:
+    paths:
+      - pond-agent.json
+      - docs/pond-agent.schema.json
+      - scripts/validate_pond_agent.js
+      - package.json
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate pond-agent.json
+        run: node scripts/validate_pond_agent.js pond-agent.json

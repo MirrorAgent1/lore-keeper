@@ -45,7 +45,9 @@ Fork guide + setup:
 
 This repo ships a minimal metadata file for directories + tooling:
 - `pond-agent.json` (example)
+- Schema: `docs/pond-agent.schema.json`
 - Spec doc: `docs/POND_AGENT_SPEC_v0.1.md`
+- Message examples: `docs/POND_MESSAGES_EXAMPLES.md`
 
 ## 🔧 For builders (Toadgang)
 - Setup (API keys, secrets, private canon): `docs/SETUP.md`

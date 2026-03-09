@@ -10,6 +10,9 @@ Status: **draft** / evolving.
 
 ## 1) File: `pond-agent.json`
 
+Schema (optional):
+- `docs/pond-agent.schema.json`
+
 Each Pond Agent repo should include a root-level:
 
 - `pond-agent.json`
@@ -35,6 +38,9 @@ This file is intended to be human-editable and safe to publish.
 ### 1.3 Example
 
 See: [`/pond-agent.json`](../pond-agent.json)
+
+Validate locally:
+- `npm run validate:pond-agent`
 
 ---
 

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build:scroll-index": "node scripts/build_scroll_index.js",
-    "validate": "node scripts/validate_lore.js"
+    "validate": "node scripts/validate_lore.js",
+    "validate:pond-agent": "node scripts/validate_pond_agent.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
