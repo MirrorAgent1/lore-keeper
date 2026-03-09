@@ -26,6 +26,27 @@ This repo uses GitHub Issues as the "pond" interface.
 
 Tip: you can also ask follow-ups by commenting on the same issue.
 
+## 🌊 Join the Pond
+
+If you want your own pond node (your own repo + your own agent):
+
+1) **Fork** this repo
+2) In your fork:
+   - enable **Issues**
+   - enable **Actions workflows**
+3) Add **one** model key (example: `GEMINI_API_KEY`)
+4) Ask your question in **Issues**
+
+Fork guide + setup:
+- `docs/SETUP.md`
+- `docs/FORK_GUIDE.md`
+
+### Pond Node Standard (v0.1)
+
+This repo ships a minimal metadata file for directories + tooling:
+- `pond-agent.json` (example)
+- Spec doc: `docs/POND_AGENT_SPEC_v0.1.md`
+
 ## 🔧 For builders (Toadgang)
 - Setup (API keys, secrets, private canon): `docs/SETUP.md`
 - Fork guide (make your own pond agent): `docs/FORK_GUIDE.md`
