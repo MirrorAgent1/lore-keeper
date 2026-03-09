@@ -35,11 +35,21 @@ jobs:
         github.event.comment.user.login != 'toadaid-agent0' &&
         github.event.comment.body != null &&
         github.event.comment.body != '' &&
-        !contains(toLower(github.event.comment.body), 'thanks') &&
-        !contains(toLower(github.event.comment.body), 'thank you') &&
-        !contains(toLower(github.event.comment.body), 'gm') &&
-        !contains(toLower(github.event.comment.body), 'good morning') &&
-        !contains(toLower(github.event.comment.body), 'ok')
+        !contains(github.event.comment.body, 'thanks') &&
+        !contains(github.event.comment.body, 'Thanks') &&
+        !contains(github.event.comment.body, 'THANKS') &&
+        !contains(github.event.comment.body, 'thank you') &&
+        !contains(github.event.comment.body, 'Thank you') &&
+        !contains(github.event.comment.body, 'THANK YOU') &&
+        !contains(github.event.comment.body, 'gm') &&
+        !contains(github.event.comment.body, 'GM') &&
+        !contains(github.event.comment.body, 'Gm') &&
+        !contains(github.event.comment.body, 'good morning') &&
+        !contains(github.event.comment.body, 'Good morning') &&
+        !contains(github.event.comment.body, 'GOOD MORNING') &&
+        !contains(github.event.comment.body, 'ok') &&
+        !contains(github.event.comment.body, 'Ok') &&
+        !contains(github.event.comment.body, 'OK')
       )
     runs-on: ubuntu-latest
     permissions:
